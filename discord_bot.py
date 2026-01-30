@@ -2,9 +2,7 @@ import discord
 from discord.ext import commands
 import os
 from datetime import timedelta
-import yt_dlp
 import asyncio
-import imageio_ffmpeg
 
 intents = discord.Intents.all()
 
@@ -15,72 +13,9 @@ class mybot(commands.Bot):
 
 bot = mybot()
 
-# Music Config
-yt_dl_opts = {'format': 'bestaudio/best'}
-ytdl = yt_dlp.YoutubeDL(yt_dl_opts)
-# Get the ffmpeg executable path from the python package
-ffmpeg_executable = imageio_ffmpeg.get_ffmpeg_exe()
-ffmpeg_options = {'options': '-vn', 'executable': ffmpeg_executable}
-
 @bot.event
 async def on_ready():
     print(f"Logged in as {bot.user}")
-
-@bot.command(name="play")
-async def play(ctx, *, query):
-    if not ctx.author.voice:
-        await ctx.send("You need to be in a voice channel to use this command.")
-        return
-
-    channel = ctx.author.voice.channel
-    if not ctx.voice_client:
-        await channel.connect()
-    else:
-        await ctx.voice_client.move_to(channel)
-
-    # Defer response as download might take time
-    await ctx.send(f"Searching for: **{query}** ...")
-
-    try:
-        loop = asyncio.get_event_loop()
-        # Check if it is a direct URL or a search query
-        if not query.startswith("http"):
-            query = f"ytsearch:{query}"
-
-        data = await loop.run_in_executor(None, lambda: ytdl.extract_info(query, download=False))
-        
-        # If it's a search result, take the first item
-        if 'entries' in data:
-            data = data['entries'][0]
-
-        song = data['url']
-        # Pass the executable path explicitly
-        player = discord.FFmpegPCMAudio(song, **ffmpeg_options)
-        
-        if ctx.voice_client.is_playing():
-            ctx.voice_client.stop()
-            
-        ctx.voice_client.play(player)
-        
-        await ctx.send(f"Now playing: **{data.get('title', 'Unknown Title')}**")
-    except Exception as e:
-        await ctx.send(f"An error occurred: {e}")
-
-@bot.command(name="stop")
-async def stop(ctx):
-    if ctx.voice_client:
-        ctx.voice_client.stop()
-        await ctx.send("Music stopped.")
-    else:
-        await ctx.send("I am not playing anything.")
-
-@bot.command(name="leave")
-async def leave(ctx):
-    if ctx.voice_client:
-        await ctx.voice_client.disconnect()
-        await ctx.send("Disconnected from voice channel.")
-    else:
-        await ctx.send("I am not in a voice channel.")
 
 @bot.command(name="hello")
 async def hello(ctx):
@@ -141,11 +76,6 @@ async def help(ctx):
     
     embed.add_field(name="!hello", value="Says hello.", inline=False)
     embed.add_field(name="!ping", value="Shows bot latency.", inline=False)
-
-    embed.add_field(name="--- Music ---", value="*Playing audio*", inline=False)
-    embed.add_field(name="!play [url]", value="Plays music from YouTube.", inline=False)
-    embed.add_field(name="!stop", value="Stops the music.", inline=False)
-    embed.add_field(name="!leave", value="Disconnects from voice channel.", inline=False)
     
     embed.add_field(name="--- Moderation ---", value="*Requires 'Moderatör' role*", inline=False)
     embed.add_field(name="!kick @user [reason]", value="Kicks a user.", inline=False)
