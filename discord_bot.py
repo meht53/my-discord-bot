@@ -16,9 +16,9 @@ bot = mybot()
 async def on_ready():
     print(f"Logged in as {bot.user}")
 
-@bot.command(name="merhaba")
+@bot.command(name="hello")
 async def hello(ctx):
-    await ctx.send("Merhaba!")
+    await ctx.send("Hello!")
 
 @bot.command(name="ping")
 async def ping(ctx):
