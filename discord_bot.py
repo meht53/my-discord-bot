@@ -4,6 +4,7 @@ import os
 from datetime import timedelta
 import yt_dlp
 import asyncio
+import imageio_ffmpeg
 
 intents = discord.Intents.all()
 
@@ -17,7 +18,9 @@ bot = mybot()
 # Music Config
 yt_dl_opts = {'format': 'bestaudio/best'}
 ytdl = yt_dlp.YoutubeDL(yt_dl_opts)
-ffmpeg_options = {'options': '-vn'}
+# Get the ffmpeg executable path from the python package
+ffmpeg_executable = imageio_ffmpeg.get_ffmpeg_exe()
+ffmpeg_options = {'options': '-vn', 'executable': ffmpeg_executable}
 
 @bot.event
 async def on_ready():
@@ -51,6 +54,7 @@ async def play(ctx, *, query):
             data = data['entries'][0]
 
         song = data['url']
+        # Pass the executable path explicitly
         player = discord.FFmpegPCMAudio(song, **ffmpeg_options)
         
         if ctx.voice_client.is_playing():
