@@ -1,1 +1,7 @@
 discord.py
+
+
+
+git remote add origin https://github.com/meht53/my-discord-bot.git
+git branch -M main
+git push -u origin main

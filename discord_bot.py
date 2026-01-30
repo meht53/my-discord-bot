@@ -18,6 +18,10 @@ async def on_ready():
 async def hello(ctx):
     await ctx.send("Merhaba!")
 
+@bot.command(name="ping")
+async def ping(ctx):
+    await ctx.send(f"Pong! Gecikme: {round(bot.latency * 1000)}ms")
+
 if __name__ == "__main__":
     token = os.getenv("DISCORD_TOKEN")
     if token:
