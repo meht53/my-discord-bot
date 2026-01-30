@@ -24,7 +24,7 @@ async def on_ready():
     print(f"Logged in as {bot.user}")
 
 @bot.command(name="play")
-async def play(ctx, url):
+async def play(ctx, *, query):
     if not ctx.author.voice:
         await ctx.send("You need to be in a voice channel to use this command.")
         return
@@ -36,16 +36,26 @@ async def play(ctx, url):
         await ctx.voice_client.move_to(channel)
 
     # Defer response as download might take time
-    await ctx.send(f"Searching and downloading: {url} ...")
+    await ctx.send(f"Searching for: **{query}** ...")
 
     try:
         loop = asyncio.get_event_loop()
-        data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url, download=False))
+        # Check if it is a direct URL or a search query
+        if not query.startswith("http"):
+            query = f"ytsearch:{query}"
+
+        data = await loop.run_in_executor(None, lambda: ytdl.extract_info(query, download=False))
         
+        # If it's a search result, take the first item
+        if 'entries' in data:
+            data = data['entries'][0]
+
         song = data['url']
         player = discord.FFmpegPCMAudio(song, **ffmpeg_options)
         
-        ctx.voice_client.stop()
+        if ctx.voice_client.is_playing():
+            ctx.voice_client.stop()
+            
         ctx.voice_client.play(player)
         
         await ctx.send(f"Now playing: **{data.get('title', 'Unknown Title')}**")
