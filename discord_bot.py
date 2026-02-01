@@ -42,26 +42,26 @@ async def ping(ctx):
     await ctx.send(f"Pong! Latency: {round(bot.latency * 1000)}ms")
 
 @bot.command(name="kick")
-@commands.has_role("Moderatör")
+@commands.has_role("meht53")
 async def kick(ctx, member: discord.Member, *, reason=None):
     await member.kick(reason=reason)
     await ctx.send(f"{member.mention} has been kicked. Reason: {reason}")
 
 @bot.command(name="ban")
-@commands.has_role("Moderatör")
+@commands.has_role("meht53")
 async def ban(ctx, member: discord.Member, *, reason=None):
     await member.ban(reason=reason)
     await ctx.send(f"{member.mention} has been banned. Reason: {reason}")
 
 @bot.command(name="unban")
-@commands.has_role("Moderatör")
+@commands.has_role("meht53")
 async def unban(ctx, user_id: int):
     user = await bot.fetch_user(user_id)
     await ctx.guild.unban(user)
     await ctx.send(f"{user.name} has been unbanned.")
 
 @bot.command(name="tempban")
-@commands.has_role("Moderatör")
+@commands.has_role("meht53")
 async def tempban(ctx, member: discord.Member, minutes: int, *, reason=None):
     await member.ban(reason=reason)
     await ctx.send(f"{member.mention} has been banned for {minutes} minutes. Reason: {reason}")
@@ -70,38 +70,38 @@ async def tempban(ctx, member: discord.Member, minutes: int, *, reason=None):
     await ctx.send(f"{member.mention} has been unbanned (tempban expired).")
 
 @bot.command(name="mute")
-@commands.has_role("Moderatör")
+@commands.has_role("meht53")
 async def mute(ctx, member: discord.Member, minutes: int, *, reason="No reason provided"):
     time = timedelta(minutes=minutes)
     await member.timeout(time, reason=reason)
     await ctx.send(f"{member.mention} has been muted for {minutes} minutes. Reason: {reason}")
 
 @bot.command(name="unmute")
-@commands.has_role("Moderatör")
+@commands.has_role("meht53")
 async def unmute(ctx, member: discord.Member):
     await member.timeout(None)
     await ctx.send(f"{member.mention} has been unmuted.")
 
 @bot.command(name="slowmode")
-@commands.has_role("Moderatör")
+@commands.has_role("meht53")
 async def slowmode(ctx, seconds: int):
     await ctx.channel.edit(slowmode_delay=seconds)
     await ctx.send(f"Slowmode set to {seconds} seconds.")
 
 @bot.command(name="add_role")
-@commands.has_role("Moderatör")
+@commands.has_role("meht53")
 async def add_role(ctx, member: discord.Member, role: discord.Role):
     await member.add_roles(role)
     await ctx.send(f"Added {role.name} role to {member.mention}.")
 
 @bot.command(name="remove_role")
-@commands.has_role("Moderatör")
+@commands.has_role("meht53")
 async def remove_role(ctx, member: discord.Member, role: discord.Role):
     await member.remove_roles(role)
     await ctx.send(f"Removed {role.name} role from {member.mention}.")
 
 @bot.command(name="warn")
-@commands.has_role("Moderatör")
+@commands.has_role("meht53")
 async def warn(ctx, member: discord.Member, *, reason):
     warnings = load_warnings()
     user_id = str(member.id)
@@ -115,7 +115,7 @@ async def warn(ctx, member: discord.Member, *, reason):
     await ctx.send(f"{member.mention} has been warned. Reason: {reason}")
 
 @bot.command(name="infractions")
-@commands.has_role("Moderatör")
+@commands.has_role("meht53")
 async def infractions(ctx, member: discord.Member):
     warnings = load_warnings()
     user_id = str(member.id)
@@ -131,7 +131,7 @@ async def infractions(ctx, member: discord.Member):
     await ctx.send(embed=embed)
 
 @bot.command(name="clear")
-@commands.has_role("Moderatör")
+@commands.has_role("meht53")
 async def clear(ctx, amount: int):
     # Delete the command message + amount
     await ctx.channel.purge(limit=amount + 1)
@@ -175,7 +175,7 @@ async def help(ctx):
     embed.add_field(name="!hello", value="Says hello.", inline=False)
     embed.add_field(name="!ping", value="Shows bot latency.", inline=False)
     
-    embed.add_field(name="--- Moderation ---", value="*Requires 'Moderatör' role*", inline=False)
+    embed.add_field(name="--- Moderation ---", value="*Requires 'meht53' role*", inline=False)
     embed.add_field(name="!kick @user [reason]", value="Kicks a user.", inline=False)
     embed.add_field(name="!ban @user [reason]", value="Bans a user.", inline=False)
     embed.add_field(name="!tempban @user [minutes] [reason]", value="Temporarily bans a user.", inline=False)
@@ -199,7 +199,7 @@ async def help(ctx):
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.MissingRole):
-        await ctx.send("You need the 'Moderatör' role to use this command.")
+        await ctx.send("You need the 'meht53' role to use this command.")
     elif isinstance(error, commands.MissingRequiredArgument):
         await ctx.send("Missing arguments. Please check command usage.")
     elif isinstance(error, commands.BadArgument):
