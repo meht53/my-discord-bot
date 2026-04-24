@@ -5,6 +5,9 @@ from datetime import timedelta
 import asyncio
 import json
 import typing
+from dotenv import load_dotenv
+
+load_dotenv()
 
 intents = discord.Intents.all()
 
